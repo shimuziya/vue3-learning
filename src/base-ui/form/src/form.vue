@@ -1,5 +1,8 @@
 <template>
   <div class="hy-form">
+    <div class="header">
+      <slot name="header"></slot>
+    </div>
     <el-form :label-width="labelWidth">
       <el-row>
         <template v-for="item in formItems" :key="item.label">
@@ -15,6 +18,7 @@
                 <el-input
                   :placeholder="item.placeholder"
                   :show-password="item.type === 'password'"
+                  v-model="formData[`${item.field}`]"
                 />
               </template>
               <template v-else-if="item.type === 'select'">
@@ -23,6 +27,7 @@
                     v-for="option in item.options"
                     :key="option.value"
                     :value="option.value"
+                    v-model="formData[`${item.field}`]"
                   >
                     {{ option.title }}
                   </el-option>
@@ -31,6 +36,7 @@
               <template v-else-if="item.type === 'datepicker'">
                 <el-date-picker
                   v-bind="item.otherOptions"
+                  v-model="formData[`${item.field}`]"
                   range-separator="-"
                 />
               </template>
@@ -39,11 +45,14 @@
         </template>
       </el-row>
     </el-form>
+    <div class="footer">
+      <slot name="footer"></slot>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { ref, defineComponent, PropType, watch } from 'vue'
 import { IFormItem } from '../types'
 
 export default defineComponent({
@@ -77,8 +86,16 @@ export default defineComponent({
       })
     }
   },
-  setup() {
-    return {}
+  emits: ['update:modelValue'],
+  setup(props, { emit }) {
+    const formData = ref({ ...props.modelValue }) //把数据取出来放在formData里
+
+    watch(formData, (newValue) => emit('update:modelValue', newValue), {
+      deep: true
+    })
+    return {
+      formData
+    }
   }
 })
 </script>
