@@ -4,7 +4,7 @@
       <hy-form v-bind="searchFormConfig" v-model="formData" />
     </div>
 
-    <div class="content"></div>
+    <div class="content">content</div>
   </div>
 </template>
 
