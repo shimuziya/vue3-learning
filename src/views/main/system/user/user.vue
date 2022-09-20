@@ -1,30 +1,25 @@
 <template>
   <div class="user">
-    <hy-form v-bind="searchFormConfig" v-model="formData">
-      <template #header>
-        <h2 class="title">高级检索</h2>
-      </template>
-      <template #footer>
-        <div class="handle-btns">
-          <el-button :icon="CircleClose">重置</el-button>
-          <el-button type="primary" :icon="Search">搜索</el-button>
-        </div>
-      </template>
-    </hy-form>
-    <div class="content">content</div>
+    <page-search :searchFormConfig="searchFormConfig" />
+    <div class="content">
+      <hy-table :ListData="userList" :propList="propList"></hy-table>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import HyForm from '@/base-ui/form'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from '@/store'
+// import HyForm from '@/base-ui/form'
 import { searchFormConfig } from './config/search.config'
 import PageSearch from '@/components/page-search'
+import HyTable from '@/base-ui/table'
 
 export default defineComponent({
   components: {
-    HyForm
-    // PageSearch
+    // HyForm
+    PageSearch,
+    HyTable
   },
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'user',
@@ -42,13 +37,28 @@ export default defineComponent({
     // const colLayout = {
     //   span: 8
     // }
-    const formData = ref({
-      id: '',
-      name: '',
-      password: '',
-      sport: '',
-      createTime: ''
+
+    const store = useStore()
+    store.dispatch('system/getPageListAction', {
+      pageUrl: '/users/list', // 查询地址
+      queryInfo: {
+        //查询条件，每页10条 ， 条件查询等
+        offset: 0,
+        size: 10
+      }
     })
+
+    const userList = computed(() => store.state.system.userList)
+    const userCount = computed(() => store.state.system.userCount)
+
+    const propList = [
+      { prop: 'name', label: '用户名', minWidth: '100' },
+      { prop: 'realname', label: '真实姓名', minWidth: '100' },
+      { prop: 'cellphone', label: '手机号码', minWidth: '100' },
+      { prop: 'enable', label: '状态', minWidth: '100' },
+      { prop: 'createAt', label: '创建时间', minWidth: '100' },
+      { prop: 'updateAt', label: '更新时间', minWidth: '100' }
+    ]
 
     return {
       // formItems,
@@ -57,10 +67,17 @@ export default defineComponent({
       // colLayout
       // formConfig
       searchFormConfig,
-      formData
+      userList,
+      userCount,
+      propList
     }
   }
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.content {
+  padding: 20px;
+  border-top: 20px solid #f5f5f5;
+}
+</style>

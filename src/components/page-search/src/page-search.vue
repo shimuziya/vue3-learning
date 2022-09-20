@@ -2,12 +2,12 @@
   <div class="page-search">
     <hy-form v-bind="searchFormConfig" v-model="formData">
       <template #header>
-        <h2 class="title">高级检索</h2>
+        <h1 class="header">高级检索</h1>
       </template>
       <template #footer>
         <div class="handle-btns">
-          <el-button :icon="CircleClose">重置</el-button>
-          <el-button type="primary" :icon="Search">搜索</el-button>
+          <el-button icon="el-icon-refresh">重置</el-button>
+          <el-button type="primary" icon="el-icon-search">搜索</el-button>
         </div>
       </template>
     </hy-form>
@@ -25,7 +25,7 @@ export default defineComponent({
       required: true
     }
   },
-  component: {
+  components: {
     HyForm
   },
   setup() {
@@ -45,9 +45,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.page-search {
-  height: 100px;
-}
 .title {
   color: red;
 }

@@ -4,6 +4,7 @@ import { App } from 'vue'
 import {
   ElButton,
   ElTable,
+  ElTableColumn,
   // ElAlert,
   // ElAutocomplete,
   // ElAvatar,
@@ -34,6 +35,7 @@ import {
 const components = [
   ElButton,
   ElTable,
+  ElTableColumn,
   // ElAlert,
   // ElAutocomplete,
   // ElAvatar,
