@@ -2,20 +2,32 @@
   <div class="user">
     <page-search :searchFormConfig="searchFormConfig" />
     <div class="content">
-      <hy-table :ListData="userList" :propList="propList">
+      <hy-table
+        :ListData="userList"
+        :propList="propList"
+        :showIndexColumn="showIndexColumn"
+        :showSelectColumn="showSelectColumn"
+        @handleSeletionChange="handleSeletionChange"
+      >
         <template #status="scope">
           <el-button
-            size="mini"
+            size="small"
             :type="scope.row.enable ? 'success' : 'danger'"
           >
             {{ scope.row.enable ? '启用' : '禁用' }}</el-button
           >
         </template>
         <template #createAt="scope">
-          <strong>{{ $filters.formatTime(scope.row.createAt) }}</strong>
+          <span>{{ $filters.formatTime(scope.row.createAt) }}</span>
         </template>
         <template #updateAt="scope">
-          <strong>{{ $filters.formatTime(scope.row.updateAt) }}</strong>
+          <span>{{ $filters.formatTime(scope.row.updateAt) }}</span>
+        </template>
+        <template #handler>
+          <div class="handle-btns">
+            <el-button type="text">编辑</el-button>
+            <el-button type="text">删除</el-button>
+          </div>
         </template>
       </hy-table>
     </div>
@@ -82,8 +94,21 @@ export default defineComponent({
         label: '更新时间',
         minWidth: '100',
         slotName: 'updateAt'
+      },
+      {
+        label: '操作',
+        minWidth: '120',
+        slotName: 'handler'
       }
     ]
+
+    const showIndexColumn = true
+    const showSelectColumn = true
+
+    //获取选中列的值集合
+    const handleSeletionChange = (value: any) => {
+      // console.log(value)
+    }
 
     return {
       // formItems,
@@ -94,7 +119,10 @@ export default defineComponent({
       searchFormConfig,
       userList,
       userCount,
-      propList
+      propList,
+      showIndexColumn,
+      showSelectColumn,
+      handleSeletionChange
     }
   }
 })
