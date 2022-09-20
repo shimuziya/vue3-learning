@@ -6,14 +6,14 @@ import 'normalize.css'
 import './assets/css/index.less'
 import './service/axios_demo'
 import { setupStore } from './store'
-import { registerApp, iconApp } from './global'
+import { globalRegister } from './global'
 import * as ElIcons from '@element-plus/icons'
 import { isValidKey } from './utils/validKey'
 //import ElementPlus from 'element-plus'
 
 const app = createApp(App)
 
-registerApp(app)
+app.use(globalRegister)
 //iconApp(app) // 单个导入
 // Object.keys(ELIcons).forEach((key) => {
 //   app.component(key, ELIcons[key])
