@@ -2,51 +2,29 @@
   <div class="user">
     <page-search :searchFormConfig="searchFormConfig" />
     <div class="content">
-      <hy-table
-        :ListData="userList"
-        :propList="propList"
-        :showIndexColumn="showIndexColumn"
-        :showSelectColumn="showSelectColumn"
-        @handleSeletionChange="handleSeletionChange"
-      >
-        <template #status="scope">
-          <el-button
-            size="small"
-            :type="scope.row.enable ? 'success' : 'danger'"
-          >
-            {{ scope.row.enable ? '启用' : '禁用' }}</el-button
-          >
-        </template>
-        <template #createAt="scope">
-          <span>{{ $filters.formatTime(scope.row.createAt) }}</span>
-        </template>
-        <template #updateAt="scope">
-          <span>{{ $filters.formatTime(scope.row.updateAt) }}</span>
-        </template>
-        <template #handler>
-          <div class="handle-btns">
-            <el-button type="text">编辑</el-button>
-            <el-button type="text">删除</el-button>
-          </div>
-        </template>
-      </hy-table>
+      <page-content
+        :contentTableConfig="contentTableConfig"
+        pageName="user"
+      ></page-content>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
-import { useStore } from '@/store'
+import { defineComponent } from 'vue'
 // import HyForm from '@/base-ui/form'
 import { searchFormConfig } from './config/search.config'
+import { contentTableConfig } from './config/content.config'
 import PageSearch from '@/components/page-search'
-import HyTable from '@/base-ui/table'
+// import HyTable from '@/base-ui/table'
+import PageContent from '@/components/page-content'
 
 export default defineComponent({
   components: {
     // HyForm
     PageSearch,
-    HyTable
+    // HyTable
+    PageContent
   },
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'user',
@@ -65,51 +43,6 @@ export default defineComponent({
     //   span: 8
     // }
 
-    const store = useStore()
-    store.dispatch('system/getPageListAction', {
-      pageUrl: '/users/list', // 查询地址
-      queryInfo: {
-        //查询条件，每页10条 ， 条件查询等
-        offset: 0,
-        size: 10
-      }
-    })
-
-    const userList = computed(() => store.state.system.userList)
-    const userCount = computed(() => store.state.system.userCount)
-
-    const propList = [
-      { prop: 'name', label: '用户名', minWidth: '100' },
-      { prop: 'realname', label: '真实姓名', minWidth: '100' },
-      { prop: 'cellphone', label: '手机号码', minWidth: '100' },
-      { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
-      {
-        prop: 'createAt',
-        label: '创建时间',
-        minWidth: '100',
-        slotName: 'createAt'
-      },
-      {
-        prop: 'updateAt',
-        label: '更新时间',
-        minWidth: '100',
-        slotName: 'updateAt'
-      },
-      {
-        label: '操作',
-        minWidth: '120',
-        slotName: 'handler'
-      }
-    ]
-
-    const showIndexColumn = true
-    const showSelectColumn = true
-
-    //获取选中列的值集合
-    const handleSeletionChange = (value: any) => {
-      // console.log(value)
-    }
-
     return {
       // formItems,
       // labelWidth,
@@ -117,20 +50,13 @@ export default defineComponent({
       // colLayout
       // formConfig
       searchFormConfig,
-      userList,
-      userCount,
-      propList,
-      showIndexColumn,
-      showSelectColumn,
-      handleSeletionChange
+      // propList,
+      // showIndexColumn,
+      // showSelectColumn,
+      contentTableConfig
     }
   }
 })
 </script>
 
-<style scoped>
-.content {
-  padding: 20px;
-  border-top: 20px solid #f5f5f5;
-}
-</style>
+<style scoped></style>
