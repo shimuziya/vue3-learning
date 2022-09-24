@@ -17,28 +17,35 @@
               >
                 <el-input
                   :placeholder="item.placeholder"
+                  v-bind="item.otherOptions"
                   :show-password="item.type === 'password'"
-                  v-model="formData[`${item.field}`]"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 />
               </template>
               <template v-else-if="item.type === 'select'">
-                <el-select :placeholder="item.placeholder" style="width: 100%">
+                <el-select
+                  :placeholder="item.placeholder"
+                  v-bind="item.otherOptions"
+                  style="width: 100%"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
+                >
                   <el-option
                     v-for="option in item.options"
                     :key="option.value"
                     :value="option.value"
-                    v-model="formData[`${item.field}`]"
+                    >{{ option.title }}</el-option
                   >
-                    {{ option.title }}
-                  </el-option>
                 </el-select>
               </template>
               <template v-else-if="item.type === 'datepicker'">
                 <el-date-picker
+                  style="width: 100%"
                   v-bind="item.otherOptions"
-                  v-model="formData[`${item.field}`]"
-                  range-separator="-"
-                />
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
+                ></el-date-picker>
               </template>
             </el-form-item>
           </el-col>
@@ -52,12 +59,12 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, PropType, watch } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { IFormItem } from '../types'
 
 export default defineComponent({
-  name: 'hy-form',
   props: {
+    //page-content.vue界面的v-model="formData"
     modelValue: {
       type: Object,
       required: true
@@ -76,9 +83,8 @@ export default defineComponent({
     },
     colLayout: {
       type: Object,
-      span: 8,
       default: () => ({
-        xl: 6, //24/6 = 4
+        xl: 6, // >1920px 4个
         lg: 8,
         md: 12,
         sm: 24,
@@ -86,20 +92,33 @@ export default defineComponent({
       })
     }
   },
-  emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const formData = ref({ ...props.modelValue }) //把数据取出来放在formData里
+    // const formData = ref({ ...props.modelValue })
 
-    watch(formData, (newValue) => emit('update:modelValue', newValue), {
-      deep: true
-    })
+    // watch(
+    //   formData,
+    //   (newValue) => {
+    //     console.log(newValue)
+    //     emit('update:modelValue', newValue)
+    //   },
+    //   {
+    //     deep: true
+    //   }
+    // )
+
+    const handleValueChange = (value: any, field: string) => {
+      //发生改变时emit update:modelValue出去到page-search的formData里，传的是后面的对象
+      emit('update:modelValue', { ...props.modelValue, [field]: value })
+    }
+
     return {
-      formData
+      handleValueChange
     }
   }
 })
 </script>
-<style scoped>
+
+<style scoped lang="less">
 .hy-form {
   padding-top: 22px;
 }

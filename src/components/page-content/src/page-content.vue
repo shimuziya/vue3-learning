@@ -52,21 +52,35 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore()
-    store.dispatch('system/getPageListAction', {
-      //name动态获取
-      pageName: props.pageName, // 查询地址
-      queryInfo: {
-        //查询条件，每页10条 ， 条件查询等
-        offset: 0,
-        size: 10
-      }
-    })
-
+    //发送网络请求
+    // store.dispatch('system/getPageListAction', {
+    //   //name动态获取
+    //   pageName: props.pageName, // 查询地址
+    //   queryInfo: {
+    //     //查询条件，每页10条 ， 条件查询等
+    //     offset: 0,
+    //     size: 10
+    //   }
+    // })
+    //发送网络请求
+    const getPageData = (queryInfo: any = {}) => {
+      store.dispatch('system/getPageListAction', {
+        //name动态获取
+        pageName: props.pageName, // 查询地址
+        queryInfo: {
+          //查询条件，每页10条 ， 条件查询等
+          offset: 0,
+          size: 10,
+          ...queryInfo //直接加在后面
+        }
+      })
+    }
+    getPageData()
+    // 从vuex中获取数据
     const dataList = computed(() =>
       store.getters[`system/pageListData`](props.pageName)
     )
     // const userList = computed(() => store.state.system.userList)
-    const userCount = computed(() => store.state.system.userCount)
 
     //获取选中列的值集合
     const handleSeletionChange = (value: any) => {
@@ -74,8 +88,8 @@ export default defineComponent({
     }
     return {
       dataList,
-      userCount,
-      handleSeletionChange
+      handleSeletionChange,
+      getPageData
     }
   }
 })

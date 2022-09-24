@@ -1,8 +1,13 @@
 <template>
   <div class="user">
-    <page-search :searchFormConfig="searchFormConfig" />
+    <page-search
+      :searchFormConfig="searchFormConfig"
+      @resetBtnClick="handleResetClick"
+      @searchBtnClick="handleSearchClick"
+    />
     <div class="content">
       <page-content
+        ref="pageContentRef"
         :contentTableConfig="contentTableConfig"
         pageName="user"
       ></page-content>
@@ -11,13 +16,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 // import HyForm from '@/base-ui/form'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
 import PageSearch from '@/components/page-search'
 // import HyTable from '@/base-ui/table'
 import PageContent from '@/components/page-content'
+import { usePageSearch } from '@/hooks/usePageSearch'
 
 export default defineComponent({
   components: {
@@ -43,6 +49,17 @@ export default defineComponent({
     //   span: 8
     // }
 
+    //抽在hooks/usePageSearch
+    // const pageContentRef = ref<InstanceType<typeof PageContent>>()
+    // const handleResetClick = () => {
+    //   pageContentRef.value?.getPageData()
+    // }
+    // const handleSearchClick = (queryInfo: any) => {
+    //   pageContentRef.value?.getPageData(queryInfo)
+    // }
+    const [pageContentRef, handleResetClick, handleSearchClick] =
+      usePageSearch()
+
     return {
       // formItems,
       // labelWidth,
@@ -53,7 +70,10 @@ export default defineComponent({
       // propList,
       // showIndexColumn,
       // showSelectColumn,
-      contentTableConfig
+      contentTableConfig,
+      handleResetClick,
+      handleSearchClick,
+      pageContentRef
     }
   }
 })
