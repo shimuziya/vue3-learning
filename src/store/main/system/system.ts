@@ -13,7 +13,9 @@ const systemMoudle: Module<ISystemState, IRootState> = {
       roleList: [],
       roleCount: 0,
       goodsList: [],
-      goodsCount: 0
+      goodsCount: 0,
+      menuList: [],
+      menuCount: 0
     }
   },
   mutations: {
@@ -34,6 +36,12 @@ const systemMoudle: Module<ISystemState, IRootState> = {
     },
     changeGoodsCount(state, count: number) {
       state.goodsCount = count
+    },
+    changeMenuList(state, list: any[]) {
+      state.menuList = list
+    },
+    changeMenuCount(state, count: number) {
+      state.menuCount = count
     }
   },
   getters: {
@@ -43,7 +51,7 @@ const systemMoudle: Module<ISystemState, IRootState> = {
     pageListData(state) {
       return (pageName: string) => {
         switch (pageName) {
-          case 'user':
+          case 'users':
             return state.userList
             break
           case 'role':
@@ -51,6 +59,9 @@ const systemMoudle: Module<ISystemState, IRootState> = {
             break
           case 'goods':
             return state.goodsList
+            break
+          case 'menu':
+            return state.menuList
             break
         }
       }
@@ -69,7 +80,7 @@ const systemMoudle: Module<ISystemState, IRootState> = {
       // 用switch方式挨个匹配
       let pageUrl = ''
       switch (pageName) {
-        case 'user':
+        case 'users':
           pageUrl = '/users/list'
           break
         case 'role':
@@ -78,13 +89,16 @@ const systemMoudle: Module<ISystemState, IRootState> = {
         case 'goods':
           pageUrl = '/goods/list'
           break
+        case 'menu':
+          pageUrl = '/menu/list'
+          break
       }
 
       //做切割拼接或使用下面的switch
       // const changePageName = pageName.slice(0,1).toUpperCase() + pageName.slice(1)
       let name = ''
       switch (pageName) {
-        case 'user':
+        case 'users':
           name = 'User'
           break
         case 'role':
@@ -92,6 +106,9 @@ const systemMoudle: Module<ISystemState, IRootState> = {
           break
         case 'goods':
           name = 'Goods'
+          break
+        case 'menu':
+          name = 'Menu'
           break
       }
       //pageList代表所有页面数据

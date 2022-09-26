@@ -9,7 +9,7 @@
     >
       <!-- 1、header的插槽 -->
       <template #headerHandler>
-        <el-button>新建用户</el-button>
+        <el-button v-if="isCreate">新建用户</el-button>
       </template>
 
       <template #status="scope">
@@ -25,8 +25,8 @@
       </template>
       <template #handler>
         <div class="handle-btns">
-          <el-button type="text">编辑</el-button>
-          <el-button type="text">删除</el-button>
+          <el-button type="text" v-if="isDelete">编辑</el-button>
+          <el-button type="text" v-if="isDelete">删除</el-button>
         </div>
       </template>
       <!-- 在page-content界面动态添加插槽 -->
@@ -47,6 +47,7 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import HyTable from '@/base-ui/table'
 import { useStore } from '@/store'
+import { usePermission } from '@/hooks/usePermission'
 
 export default defineComponent({
   props: {
@@ -75,11 +76,18 @@ export default defineComponent({
     //   }
     // })
 
+    //0、获取按钮权限
+    const isCreate = usePermission(props.pageName, 'create')
+    const isUpdate = usePermission(props.pageName, 'update')
+    const isDelete = usePermission(props.pageName, 'delete')
+    const isQuery = usePermission(props.pageName, 'query')
+
     //1、双向绑定pageInfo
     const pageInfo = ref({ currentPage: 0, pageSize: 10 })
     watch(pageInfo, () => getPageData())
     //2、发送网络请求
     const getPageData = (queryInfo: any = {}) => {
+      if (!isQuery) return
       store.dispatch('system/getPageListAction', {
         //name动态获取
         pageName: props.pageName, // 查询地址
@@ -124,7 +132,10 @@ export default defineComponent({
       getPageData,
       listCount,
       pageInfo,
-      otherPropSlots
+      otherPropSlots,
+      isCreate,
+      isUpdate,
+      isDelete
     }
   }
 })
