@@ -28,7 +28,7 @@
         width="80"
       ></el-table-column>
       <template v-for="propItem in propList" :key="propItem.prop">
-        <el-table-column v-bind="propItem" align="center">
+        <el-table-column v-bind="propItem" align="center" show-overflow-tooltip>
           <template #default="scope">
             <slot :name="propItem.slotName" :row="scope.row">
               {{ scope.row[propItem.prop] }}
@@ -40,11 +40,13 @@
     <div class="footer">
       <slot name="footer">
         <el-pagination
-          v-model:currentPage="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[100, 200, 300, 400]"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="page.currentPage"
+          :page-size="page.pageSize"
+          :page-sizes="[10, 20, 30, 40]"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="listCount"
         />
       </slot>
     </div>
@@ -55,11 +57,14 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  emits: ['handleSeletionChange'],
   props: {
     title: {
       type: String,
       default: ''
+    },
+    listCount: {
+      type: Number,
+      required: true
     },
     ListData: {
       type: Array,
@@ -76,14 +81,28 @@ export default defineComponent({
     showSelectColumn: {
       type: Boolean,
       default: false
+    },
+    page: {
+      type: Object,
+      default: () => ({ currentPage: 0, pageSize: 10 })
     }
   },
+  emits: ['handleSeletionChange', 'update:page'],
   setup(props, { emit }) {
     const handleSeletionChange = (value: any) => {
       emit('handleSeletionChange', value)
     }
+
+    const handleCurrentChange = (currentPage: number) => {
+      emit('update:page', { ...props.page, currentPage })
+    }
+    const handleSizeChange = (pageSize: number) => {
+      emit('update:page', { ...props.page, pageSize })
+    }
     return {
-      handleSeletionChange
+      handleSeletionChange,
+      handleSizeChange,
+      handleCurrentChange
     }
   }
 })

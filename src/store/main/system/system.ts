@@ -11,21 +11,29 @@ const systemMoudle: Module<ISystemState, IRootState> = {
       userList: [],
       userCount: 0,
       roleList: [],
-      roleCount: 0
+      roleCount: 0,
+      goodsList: [],
+      goodsCount: 0
     }
   },
   mutations: {
-    changeUserList(state, userList: any[]) {
-      state.userList = userList
+    changeUserList(state, list: any[]) {
+      state.userList = list
     },
-    changeUserCount(state, userCount: number) {
-      state.userCount = userCount
+    changeUserCount(state, count: number) {
+      state.userCount = count
     },
-    changeRoleList(state, roleList: any[]) {
-      state.roleList = roleList
+    changeRoleList(state, list: any[]) {
+      state.roleList = list
     },
-    changeRoleCount(state, roleCount: number) {
-      state.roleCount = roleCount
+    changeRoleCount(state, count: number) {
+      state.roleCount = count
+    },
+    changeGoodsList(state, list: any[]) {
+      state.goodsList = list
+    },
+    changeGoodsCount(state, count: number) {
+      state.goodsCount = count
     }
   },
   getters: {
@@ -41,13 +49,22 @@ const systemMoudle: Module<ISystemState, IRootState> = {
           case 'role':
             return state.roleList
             break
+          case 'goods':
+            return state.goodsList
+            break
         }
+      }
+    },
+    pageListCount(state) {
+      return (pageName: string) => {
+        return (state as any)[`${pageName}Count`]
       }
     }
   },
   actions: {
     async getPageListAction({ commit }, payload: any) {
       const pageName = payload.pageName
+      // const pageUrl = `/${pageName}/list`
 
       // 用switch方式挨个匹配
       let pageUrl = ''
@@ -58,9 +75,12 @@ const systemMoudle: Module<ISystemState, IRootState> = {
         case 'role':
           pageUrl = '/role/list'
           break
+        case 'goods':
+          pageUrl = '/goods/list'
+          break
       }
 
-      //做切割拼接
+      //做切割拼接或使用下面的switch
       // const changePageName = pageName.slice(0,1).toUpperCase() + pageName.slice(1)
       let name = ''
       switch (pageName) {
@@ -69,6 +89,9 @@ const systemMoudle: Module<ISystemState, IRootState> = {
           break
         case 'role':
           name = 'Role'
+          break
+        case 'goods':
+          name = 'Goods'
           break
       }
       //pageList代表所有页面数据

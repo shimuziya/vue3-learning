@@ -23,5 +23,5 @@ export const contentTableConfig = {
 
   showIndexColumn: true,
   showSelectColumn: true,
-  title: '用户列表'
+  title: '角色列表'
 }
