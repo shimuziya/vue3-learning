@@ -6,15 +6,8 @@
       </template>
       <template #footer>
         <div class="handle-btns">
-          <el-button icon="el-icon-refresh" @click="handelResetClick"
-            >重置</el-button
-          >
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            @click="handleSearchClick"
-            >搜索</el-button
-          >
+          <el-button @click="handelResetClick">重置</el-button>
+          <el-button type="primary" @click="handleSearchClick">搜索</el-button>
         </div>
       </template>
     </hy-form>

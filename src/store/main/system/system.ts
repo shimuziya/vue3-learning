@@ -2,7 +2,13 @@ import { IRootState } from '@/store/type'
 import { Module } from 'vuex'
 import { ISystemState } from './types'
 
-import { getPageListData } from '@/service/main/system/system'
+import {
+  deletePageData,
+  getPageListData,
+  createPageData,
+  editPageData
+} from '@/service/main/system/system'
+import { useStore } from '@/store'
 
 const systemMoudle: Module<ISystemState, IRootState> = {
   namespaced: true,
@@ -75,24 +81,24 @@ const systemMoudle: Module<ISystemState, IRootState> = {
   actions: {
     async getPageListAction({ commit }, payload: any) {
       const pageName = payload.pageName
-      // const pageUrl = `/${pageName}/list`
+      const pageUrl = `/${pageName}/list`
 
-      // 用switch方式挨个匹配
-      let pageUrl = ''
-      switch (pageName) {
-        case 'users':
-          pageUrl = '/users/list'
-          break
-        case 'role':
-          pageUrl = '/role/list'
-          break
-        case 'goods':
-          pageUrl = '/goods/list'
-          break
-        case 'menu':
-          pageUrl = '/menu/list'
-          break
-      }
+      // // 用switch方式挨个匹配
+      // let pageUrl = ''
+      // switch (pageName) {
+      //   case 'users':
+      //     pageUrl = '/users/list'
+      //     break
+      //   case 'role':
+      //     pageUrl = '/role/list'
+      //     break
+      //   case 'goods':
+      //     pageUrl = '/goods/list'
+      //     break
+      //   case 'menu':
+      //     pageUrl = '/menu/list'
+      //     break
+      // }
 
       //做切割拼接或使用下面的switch
       // const changePageName = pageName.slice(0,1).toUpperCase() + pageName.slice(1)
@@ -118,6 +124,56 @@ const systemMoudle: Module<ISystemState, IRootState> = {
       const { list, totalCount } = pageResult.data
       commit(`change${name}List`, list)
       commit(`change${name}Count`, totalCount)
+    },
+
+    async deletePageDataAction({ dispatch }, payload: any) {
+      //1、pageName -> users
+      //2、id -> /users/id
+      const { pageName, id } = payload
+      const pageUrl = `/${pageName}/${id}`
+      //3、调用删除网络请求
+      await deletePageData(pageUrl)
+
+      //4、调用最新内容
+      dispatch('getPageListAction', {
+        pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10
+        }
+      })
+    },
+    async createPageDataAction({ dispatch }, payload: any) {
+      // 1.创建数据的请求
+      const { pageName, newData } = payload
+      const pageUrl = `/${pageName}`
+      await createPageData(pageUrl, newData)
+
+      // 2.请求最新的数据
+      dispatch('getPageListAction', {
+        pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10
+        }
+      })
+    },
+
+    async editPageDataAction({ dispatch }, payload: any) {
+      // 1.编辑数据的请求
+      const { pageName, editData, id } = payload
+      console.log(editData)
+      const pageUrl = `/${pageName}/${id}`
+      await editPageData(pageUrl, editData)
+
+      // 2.请求最新的数据
+      dispatch('getPageListAction', {
+        pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10
+        }
+      })
     }
   }
 }

@@ -9,7 +9,7 @@
     >
       <!-- 1、header的插槽 -->
       <template #headerHandler>
-        <el-button v-if="isCreate">新建用户</el-button>
+        <el-button v-if="isCreate" @click="handelAddClick">新建用户</el-button>
       </template>
 
       <template #status="scope">
@@ -23,10 +23,22 @@
       <template #updateAt="scope">
         <span>{{ $filters.formatTime(scope.row.updateAt) }}</span>
       </template>
-      <template #handler>
+      <template #handler="scope">
         <div class="handle-btns">
-          <el-button type="text" v-if="isDelete">编辑</el-button>
-          <el-button type="text" v-if="isDelete">删除</el-button>
+          <el-button
+            type="primary"
+            link
+            v-if="isDelete"
+            @click="handleEditClick(scope.row)"
+            >编辑</el-button
+          >
+          <el-button
+            type="primary"
+            link
+            v-if="isDelete"
+            @click="handleDeleteClick(scope.row)"
+            >删除</el-button
+          >
         </div>
       </template>
       <!-- 在page-content界面动态添加插槽 -->
@@ -63,7 +75,8 @@ export default defineComponent({
   components: {
     HyTable
   },
-  setup(props) {
+  emits: ['addBtnClick', 'editBtnClick'],
+  setup(props, { emit }) {
     const store = useStore()
     //发送网络请求
     // store.dispatch('system/getPageListAction', {
@@ -83,7 +96,7 @@ export default defineComponent({
     const isQuery = usePermission(props.pageName, 'query')
 
     //1、双向绑定pageInfo
-    const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+    const pageInfo = ref({ currentPage: 1, pageSize: 10 })
     watch(pageInfo, () => getPageData())
     //2、发送网络请求
     const getPageData = (queryInfo: any = {}) => {
@@ -93,7 +106,7 @@ export default defineComponent({
         pageName: props.pageName, // 查询地址
         queryInfo: {
           //查询条件，每页10条 ， 条件查询等
-          offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+          offset: (pageInfo.value.currentPage - 1) * pageInfo.value.pageSize,
           size: pageInfo.value.pageSize,
           ...queryInfo //直接加在后面
         }
@@ -107,9 +120,13 @@ export default defineComponent({
     )
     // const userList = computed(() => store.state.system.userList)
     const listCount = computed(() =>
-      store.getters[`system/pageListCount`](props.pageName)
+      store.getters[`system/pageListCount`](
+        props.pageName === 'users' ? 'user' : props.pageName
+      )
     )
 
+    // console.log(props.pageName + dataList.value + '草草草草')
+    // console.log(props.pageName + listCount.value + '永远永远')
     //4、获取其他动态插槽名称
     const otherPropSlots = props.contentTableConfig?.propList.filter(
       (item: any) => {
@@ -126,6 +143,23 @@ export default defineComponent({
     const handleSeletionChange = (value: any) => {
       // console.log(value)
     }
+
+    //删除、新增
+    const handleDeleteClick = (item: any) => {
+      // console.log(item)
+      store.dispatch('system/deletePageDataAction', {
+        pageName: props.pageName,
+        id: item.id
+      })
+    }
+    const handleEditClick = (item: any) => {
+      emit('editBtnClick', item)
+    }
+
+    const handelAddClick = () => {
+      emit('addBtnClick')
+    }
+
     return {
       dataList,
       handleSeletionChange,
@@ -135,7 +169,10 @@ export default defineComponent({
       otherPropSlots,
       isCreate,
       isUpdate,
-      isDelete
+      isDelete,
+      handleDeleteClick,
+      handleEditClick,
+      handelAddClick
     }
   }
 })

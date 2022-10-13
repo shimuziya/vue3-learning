@@ -43,13 +43,14 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="page.currentPage"
+          :currentPage="page.currentPage"
           :page-size="page.pageSize"
           :page-sizes="[10, 20, 30, 40]"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="listCount"
+          :total="listCount ?? 0"
         />
       </slot>
+      <!-- :total="listCount" -->
     </div>
   </div>
 </template>
