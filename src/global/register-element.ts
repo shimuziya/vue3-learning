@@ -30,7 +30,8 @@ import {
   ElDropdownMenu,
   ElAvatar,
   ElBreadcrumb,
-  ElTree
+  ElTree,
+  ElCard
 } from 'element-plus/lib'
 
 const components = [
@@ -62,7 +63,8 @@ const components = [
   ElDropdownMenu,
   ElAvatar,
   ElBreadcrumb,
-  ElTree
+  ElTree,
+  ElCard
 ]
 
 export default function (app: App): void {
